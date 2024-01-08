@@ -1,0 +1,175 @@
+
+%% Koma-Script class
+\documentclass[12pt,a4paper]{article}
+\pagestyle{empty}
+%%Umlaute
+%%\usepackage[latin1]{inputenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+\PassOptionsToPackage{hyphens}{url}\usepackage[hidelinks]{hyperref}
+
+%\usepackage{ngerman}
+
+%% Mathematics
+\usepackage{amsmath, latexsym}
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Satz}
+\newtheorem{lemma}[theorem]{Lemma}
+
+\usepackage[ruled,vlined]{algorithm2e}
+%\SetAlgorithmName{Algorythmus}
+%% Graphics
+\usepackage{graphicx}
+
+%% Line spacing
+\usepackage[onehalfspacing]{setspace}
+
+%% Einschübe verhindern
+\setlength{\parindent}{0pt}
+
+%% Bibliography
+%\usepackage[backend=bibtex]{biblatex}
+%\addbibresource{Literaturverzeichnis.bib}
+\usepackage{apacite}
+\bibliographystyle{apacite}
+
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\setlength\headheight{46pt}
+\rhead{\includegraphics[width=3cm]{ostlogo.jpg}}
+\rfoot{Seite \thepage}
+
+\begin{document}
+
+%%%%%%%%%%%%Title pages%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+\vspace*{2cm}
+\begin{center}
+\thispagestyle{empty}
+{\bf \LARGE Anwendungsbereiche von probabilistischen Primzahlentests in der Informatik}\\[1.5cm]
+\vspace*{2cm}
+{\bf \large Technischer Bericht\\
+Eastern Switzerland University of Applied Sciences}\\[1cm]
+{\large Christoph Landolt} \\[3cm]
+\vspace*{4cm}
+\begin{tabular}{ll}
+\hline
+{\small Verfasser:} & {\small Christoph Landolt}\\
+& {\small christoph.landolt@ost.ch}\\
+{\small Institut:} & {\small ICE Institut für Compuational Engineering}\\
+{\small Datum:} & {\small 10.05.2021}\\
+\hline
+\end{tabular}
+\end{center}
+\newpage
+
+%%%%%%%%%%Table of contents %%%%%%%%%%%%%%%
+%\tableofcontents
+%\newpage
+%%%%%%%%End: Table of contents %%%%%%%%%%%%
+
+%%%%%%%%%%Section One%%%%%%%%%
+\section{Einleitung}
+Die Anwendungsbereiche der Informatik dringen immer mehr in Bereiche vor, in denen mit sensiblen Daten gearbeitet wird. Aus diesem Grund sind zuverlässige Verschlüsselungsverfahren unabdingbar.\\
+Eines der wichtigsten asymmetrischen Verschlüsselungsverfahren ist der RSA-Algorithmus. Dieser basiert auf der Multiplikation von zwei Primzahlen. In der Praxis haben diese Primzahlen über 300 Stellen.
+Festzustellen, ob es sich bei so grossen Zahlen um eine Primzahl handelt, ist in der Praxis oft sehr ressourcenintensiv. Diese Arbeit beschäftigt sich mit der Frage, welche Algorithmen heute in der Informatik eingesetzt werden, um festzustellen, ob es sich bei einer gegebenen Zahl um eine Primzahl handelt und wie der aktuelle Stand der Forschung ist.\\
+Zur Beantwortung dieser Frage dient die Beschreibung des RSA-Algorithmus auf Basis wissenschaftlicher Publikationen und wissenschaftlicher Werke aus den Fächern theoretische Informatik und mathematische Zahlentheorie.\\
+Im Bericht werden als Einführung die Grundlagen von Primzahlen und der aktuelle Forschungsstand in der Verteilung von Primzahlen dokumentiert. Die wichtigsten Primzahlentests, welche in der Kryptografie zum Einzatz kommen, werden anschliessend dokumentiert. Zum Schluss werden die Nachteile der aktuellen Verfahren erläutert und mit dem AKS-Verfahren ein mögliches Verfahren der Zukunft identifiziert.
+Dieser Bericht wurde vom ICE Institut für Compuational Engineering der Ostschweizer Fachhochschule OST in Auftrag gegeben und dient als Grundlage für ein mögliches weiterführendes Forschungsprojekt.
+\newpage
+\section{Verschlüsselung}
+Eine der wichtigsten Klassen von Verschlüsselungssystemen stellen die asymmeterischen Kryptosysteme dar. Bei diesen Systemen brauchen die Sender und Empfänger von Daten keinen gemeinsamen geheimen Schlüssel zu kennen. Sowohl der Sender als auch der Empfänger haben je einen öffentlichen und einen privaten Schlüssel. Werden Daten übermittelt, verschlüsselt der Sender diese mit dem öffentlichen Schlüssel des Empfängers. Durch ein mathematisches Verfahren können diese Daten nur noch mit dem privaten Schlüssel des Empfängers in nützlicher Zeit entschlüsselt werden.\\
+Eines der wichtigsten asymmetrischen Kryptosysteme stellt das RSA-Kryptosystem dar. Wie bereits in der Einleitung ausgeführt, basiert diese auf der Faktorisierung von Primzahlen \cite{Beutelspacher.2010}. Dies stellt eine sehr hohe Sicherheit dar, da für dieses mathematische Problem noch keine effizienten Verfahren existieren.
+\section{Primzahlen}
+\subsection{Definition von Primzahlen}
+Primzahlen sind wie folgt definiert:
+\begin{definition}
+Eine natürliche Zahl $p$ grösser als 1 heisst Primzahl, wenn $p$ keinen positiven Teiler ausser 1 und sich selbst hat \cite{Rosen.2018}.
+\end{definition}
+Für diese Arbeit sind folgende drei Eigenschaften von Primzahlen relevant. Der mathematische Beweis der folgenden drei Sätze wird in der Referenzliteratur erbracht.
+\begin{theorem}
+Jede natürliche Zahl kann eindeutig als Primzahl oder als Produkt von zwei oder mehr Primzahlen geschrieben werden \cite{Rosen.2018}.
+\end{theorem}
+Dieser Satz wird auch Fundamentalsatz der Arithmetik genannt und bildet die Grundlagen des RSA-Algorithmus. Da jede natürliche Zahl als Produkt von Primzahlen geschrieben werden kann, werden die Primzahlen auch Atome der Mathematik genannt. Beispiel: $100=2*2*5*5=2^{2}*5^{2}$
+\newpage
+\begin{theorem}
+Es gibt unendlich viele Primzahlen \cite{Rosen.2018}.
+\end{theorem}
+Dieser Satz sagt aus, dass die Menge der Primzahlen nicht beschränkt ist, also keine grösste Primzahl existiert. Dies kann mittels des Satzes 1 einfach veranschaulicht werden:\\
+Angenommen es existiert eine grösste Primzahl $p_{n}$. Damit wäre die grösstmögliche natürliche Zahl $Q=p_{1}*p_{2}*...*p_{n}$. Da dies nicht der Wahrheit entspricht, kann auch keine grösste Primzahl existieren.
+\begin{theorem}
+Ist $n$ eine zusammengesetzte natürliche Zahl, dann sind die Primteiler von $n$ kleiner oder gleich $\sqrt{n}$ \cite{Rosen.2018}.
+\end{theorem}
+Dieser Satz ist wichtig für die Generierung von Primzahlen und einfache Primzahlentests. Wird geprüft, ob es sich bei einer Zahl um eine zusammenhängende Zahl handelt, müssen die Primteiler nur bis $\sqrt{n}$ geprüft werden. Beispielsweise müssen bei der Zahl $100=2^{2}*5^{2}$ die Primteiler nur bis $\sqrt{100}=10$ geprüft werden. Dadurch lassen sich viele Algorithmen frühzeitig abbrechen.
+\newpage
+\subsection{Generieren von Primzahlen}
+Bis zum jetzigen Zeitpunkt existiert noch keine geschlossene Form, um Primzahlen zu generieren \cite{Rosen.2018}. Daher werden zwei Strategien eingesetzt um Primzahlen zu finden:\\
+
+\textbf{Strategie 1: Sieb des Erathostenes}\\
+Bei dieser Methode werden alle natürlichen Zahlen aufgeführt. Danach werden alle Vielfachen dieser Zahl durchgestrichen. Als Abbruchbedingung dieses Algorithmus wird gemäss Satz 3 die Quadratwurzel der grössten Zahl in der Liste verwendet. Dieser Algorithmus kann wie folgt formalisiert werden:\\
+\begin{algorithm}[H]
+\SetAlgoLined
+    \textbf{Input} Eine natürliche Zahl $n > 1$\;
+    \textbf{Output} Alle Primzahlen von 2 bis n\;
+ \While{i $< \sqrt{n}$}{
+ Füge i zur Liste der Primzahlen und streiche alle vielvachen von i\;
+ }
+ \caption{Sieb des Erathostenes \protect\cite{Rosen.2018}}
+\end{algorithm}
+Dieser Algorithmus ist sehr gut zum Aufspüren von kleinen Primzahlen. Jedoch für die Suche von grossen Primzahlen, welche in der Kryptografie verwendet werden, ungeeignet. Daher wird auf der Suche nach grossen Primzahlen vor allem auf Klassen von Zahlen zurückgegriffen, in welchen Primzahlen häufig vorkommen. Die Wichtigste dieser Klassen sind die Mersenne-Zahlen.\\
+
+\textbf{Strategie 2: Mersenne-Zahlen}
+\begin{definition}
+Eine Zahl $2^{n}-1$ wird Mersenne-Zahl genannt. Eine Mersenne Zahl ist höchstens dann eine Primzahl, wenn n eine Primzahl ist \cite{Forster.2015}. 
+\end{definition}
+Zahlen aus der Klasse der Mersenne-Primzahlen brechen regelmässig Rekorde auf der Suche nach der grössten Primzahl. Jedoch ist nicht jede Zahl, welche die Bedingungen gemäss Definition 2 erfüllt, eine Primzahl. Um festzustellen, ob es sich bei einer Mersenne-Zahl um eine Primzahl handelt, werden Primzahlentests benötigt.
+
+\section{Primzahlentests}
+Festzustellen, ob es sich bei einer gegebenen Zahl um eine Primzahl handelt, ist eines der zentralen Probleme der Kryptografie. Dabei steht nicht nur die Zuverlässigkeit der Verfahren im Vordergrund, sondern auch die Geschwindigkeit der Algorithmen. Kein Benutzer möchte mehrere Minuten warten, bis eine sichere Verbindung aufgebaut ist.
+
+\subsection{Einfache Algorithmen}
+Das einfachste Verfahren wäre, alle Primzahlen in einer Liste zu speichern und eine neue Zahl mit dieser Liste zu vergleichen. So könnte sehr schnell und mit absoluter Sicherheit festgestellt werden, ob es sich bei dieser Zahl um eine Primzahl handelt oder nicht. Bei genauer Betrachtung scheint dieses Verfahren jedoch nicht praktikabel, da mit Satz 2 aufgezeigt werden konnte, dass es unendlich viele Primzahlen gibt. Aus diesem Grund ist es nicht möglich ein solches Verfahren auf einem Computer zu implementieren.\\
+\\
+Vielversprechender erscheint hingegen die Probedivision \cite{Forster.2015}. Bei diesem Verfahren werden ähnlich wie beim Sieb des Eratosthenes alle möglichen Zahlen bis $\sqrt{n}$ durchprobiert, auf der Suche nach einem Teiler. Dieses Verfahren kommt in der Zahlentheorie mangels besserer Alternativen auch wirklich zum Einsatz, ist aber in der Praxis für die Kryptografie zu langsam \cite{Forster.2015}.
+
+\subsection{Probabilistische Tests}
+Bei der Betrachtung der einfachen Verfahren für die Primzahlentests konnte festgestellt werden, dass diese für die Anwendungen der Kryptografie zu langsam oder zu speicherintensiv wären. Daher setzt man in diesen Anwendungen auf die probabilistischen Primzahltests, welche zu jeder untersuchten Zahl eine Wahrscheinlichkeit angeben, mit welcher es sich bei der getesteten Zahl um eine Primzahl handelt. Diese Verfahren liefern zwar keine akkuraten Primzahlen, jedoch reichen die hohen Wahrscheinlichkeiten für die Anwendungen der Kryptografie aus. \\
+Alle probabilistischen Tests basieren auf dem kleinen Satz von Fermat:
+\begin{theorem}
+Wenn p eine Primzahl ist und a eine natürliche Zahl, welche sich nicht durch p teilen lässt, dann gilt:\\
+$a^{p-1}\equiv 1 (mod p)$ \cite{Rosen.2018}.
+\end{theorem}
+Der fermatsche Primzahlentest läuft wie folgt ab: Für eine gegebene Zahl $n$ werden verschiedene Basen $a$ durchprobiert. Wird eine Basis $a$ gefunden, zu der $n$ nicht teilerfremd ist, handelt es sich bei der Zahl $n$ um keine Primzahl. Umso mehr Basen $a$ durchprobiert werden, umso genauere Resultate liefert der Primzahlentest.\\
+\\
+Eine Weiterentwicklung des fermatschen Primzahlentests ist der Miller-Rabin-Test. Bei diesem Test wird die Basis $a$ nicht mehr zufällig gewählt, sondern systematisch abgearbeitet. Daher können beispielsweise vielfache von $a$ ausgeschlossen werden und der Test liefert bessere Resultate \cite{Forster.2015}. Das Miller-Rabin-Verfahren wird aktuell in den meisten Programmiersprachen wie MATLAB oder Java standardmässig verwendet.
+
+\subsection{Verfahren der Zukunft}
+Im Jahre 2004 wurde der sogenannte AKS-Primzahlentest von mehreren indischen Mathematikern veröffentlicht. Der AKS-Primzahlentest basiert auf dem kleinen Satz von Fermat(Satz 4) und ist eine Erweiterung dieses Satzes für Polynome:
+
+\begin{theorem}
+Wenn n eine natürliche Zahl ist und a eine ganze Zahl, welche sich nicht durch n teilen lässt, dann ist n eine Primzahl, wenn gilt:\\
+$(X+a)^{n}\equiv X^{n} + a (mod n)$ \\
+Dabei ist X eine Unbestimmte. \cite{ManindraAgrawalNeerajKayalNitinSaxena.2002}.
+\end{theorem}
+\newpage
+Obwohl dieser Test theoretisch die beste Performance aufweisen würde, ist dieser für praktische Anwendungen zu langsam. Dies liegt daran, dass die Polynome aus dem Satz 5 mit einem grossen Exponenten n ebenfalls einen hohen Grad erhalten, $p(x) = a_{n}x^{n}+a_{n-1}x^{n-1}+...+a_{1}x+a_{0}$ mit $a_{n} \neq 0$ \cite{OliverBraun.2009}. Diese Polynome sind in der Praxis sehr schwer und meist nur durch einsetzen von Zahlen zu lösen \cite{Forster.2015}. Da in der Kryptografie jedoch gerade grosse Primzahlen n von Interesse sind, stellt dies ein Hindernis für den AKS-Primzahlentest dar.\\
+Trotz diesen praktischen Schwierigkeiten scheint gerade dieser Algorithmus theoretisch betrachtet viel Potenzial aufzuweisen und es wird aktiv an Lösungen für eine praktische Implementierung geforscht \cite{Prof.Dr.FolkmarBornemann.2002}.
+
+\section{Schlussfolgerungen und Ausblick}
+Durch immer schnellere Computer werden auch immer höhere Anforderungen an die Verschlüsselung gestellt. In der Praxis bedeutet dies, dass immer grössere Primzahlen benötigt werden. Dazu werden auch immer bessere Primzahlentests benötigt. Diese Arbeit konnte aufzeigen, dass in der Theorie bereits bessere Verfahren existieren, diese jedoch noch nicht erfolgreich in der Praxis eingesetzt werden können. In einem weiterführenen Forschungsprojekt könnte festgestellt werden, welche Methoden in der Praxis das höchste Potenzial haben, die probabilistischen Primzahlentests zu ersetzen.
+
+\newpage
+%%%%%%% References %%%%%%%%
+
+%%%%%%%%%%%Bibliography%%%%%%%%%%%
+
+\medskip
+\bibliography{Literaturverzeichnis.bib} % 'test.bib' provided in the original posting
+%%End: Bibliography
+
+\newpage
+\end{document}
